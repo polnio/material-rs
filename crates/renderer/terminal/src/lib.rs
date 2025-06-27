@@ -34,7 +34,12 @@ impl Renderer for TerminalRenderer {
         (text.len() as u32, 1)
     }
     fn draw_rect(&mut self, rect: Rect, color: Color) {
-        todo!()
+        let mut pos = rect.position();
+        for _ in 0..rect.height {
+            self.move_cursor(rect.position());
+            println!("{}", "░".repeat(rect.width as usize));
+            pos.y += 1;
+        }
     }
     fn draw_text(&mut self, text: &str, pos: Point, color: Color) {
         self.move_cursor(pos);
@@ -44,7 +49,8 @@ impl Renderer for TerminalRenderer {
         enable_raw_mode().expect("Failed to enable raw mode");
         execute!(self.stdout, terminal::EnterAlternateScreen, cursor::Hide)
             .expect("Failed to hide cursor");
-        let widget = widget.into_widget();
+        let mut widget = widget.into_widget();
+        self.compute_layout(&mut widget);
         widget.render(self);
         self.stdout.flush().expect("Failed to flush stdout");
         loop {
