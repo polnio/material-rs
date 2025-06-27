@@ -1,5 +1,5 @@
 use super::Widget;
-use crate::Renderer;
+use crate::{geometry::Color, Renderer};
 
 pub struct Label<'a> {
     pub text: &'a str,
@@ -7,6 +7,6 @@ pub struct Label<'a> {
 
 impl<'a> Widget for Label<'a> {
     fn render<R: Renderer>(&self, renderer: &mut R) {
-        renderer.draw_text(self.text, Default::default());
+        renderer.draw_text(self.text, Default::default(), Color::WHITE);
     }
 }

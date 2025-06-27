@@ -1,6 +1,6 @@
 use crossterm::terminal::{self, disable_raw_mode, enable_raw_mode};
 use crossterm::{cursor, event, execute};
-use material_core::geometry::Point;
+use material_core::geometry::{Color, Point, Rect};
 use material_core::widgets::{IntoWidget, Widget};
 use material_core::Renderer;
 use std::io::{Stdout, Write};
@@ -25,7 +25,10 @@ impl TerminalRenderer {
 }
 
 impl Renderer for TerminalRenderer {
-    fn draw_text(&mut self, text: &str, pos: Point) {
+    fn draw_rect(&mut self, rect: Rect, color: Color) {
+        todo!()
+    }
+    fn draw_text(&mut self, text: &str, pos: Point, color: Color) {
         self.move_cursor(pos);
         println!("{}", text);
     }

@@ -1,14 +1,39 @@
 use font_kit::family_name::FamilyName;
-use material_core::geometry::Point;
+use material_core::geometry::{Color, Point, Rect};
 use material_core::widgets::{IntoWidget, Widget};
 use material_core::Renderer;
 use ouroboros::self_referencing;
 use sdl2::event::Event;
-use sdl2::pixels::Color;
-use sdl2::rect::Rect;
 use sdl2::render::{Canvas, TextureQuery};
 use sdl2::ttf::Font;
 use sdl2::video::Window;
+
+trait ToSDLExt {
+    type Output;
+    fn to_sdl(self) -> Self::Output;
+}
+impl ToSDLExt for Color {
+    type Output = sdl2::pixels::Color;
+    fn to_sdl(self) -> Self::Output {
+        Self::Output {
+            r: self.r,
+            g: self.g,
+            b: self.b,
+            a: self.a,
+        }
+    }
+}
+impl ToSDLExt for Rect {
+    type Output = sdl2::rect::Rect;
+    fn to_sdl(self) -> Self::Output {
+        Self::Output::new(
+            self.x as i32,
+            self.y as i32,
+            self.width as u32,
+            self.height as u32,
+        )
+    }
+}
 
 #[self_referencing]
 struct SDL2RendererTTF {
@@ -69,26 +94,33 @@ impl SDL2Renderer {
 }
 
 impl Renderer for SDL2Renderer {
-    fn draw_text(&mut self, text: &str, pos: Point) {
+    fn draw_text(&mut self, text: &str, pos: Point, color: Color) {
         let texture_creator = self.canvas.texture_creator();
         let surface = self
             .ttf
             .borrow_font()
             .render(text)
-            .solid(Color::WHITE)
+            .solid(color.to_sdl())
             .unwrap();
         let texture = texture_creator
             .create_texture_from_surface(&surface)
             .unwrap();
         let TextureQuery { width, height, .. } = texture.query();
-        let target = Rect::new(pos.x as i32, pos.y as i32, width, height);
+        let target = sdl2::rect::Rect::new(pos.x as i32, pos.y as i32, width, height);
         self.canvas.copy(&texture, None, target).unwrap();
+    }
+
+    fn draw_rect(&mut self, rect: Rect, color: Color) {
+        let c = self.canvas.draw_color();
+        self.canvas.set_draw_color(color.to_sdl());
+        self.canvas.fill_rect(rect.to_sdl()).unwrap();
+        self.canvas.set_draw_color(c);
     }
 
     fn render(&mut self, widget: impl IntoWidget) {
         let widget = widget.into_widget();
 
-        self.canvas.set_draw_color(Color::BLACK);
+        self.canvas.set_draw_color(Color::BLACK.to_sdl());
         self.canvas.clear();
         self.canvas.present();
         'running: loop {

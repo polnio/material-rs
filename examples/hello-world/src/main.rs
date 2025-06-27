@@ -1,8 +1,9 @@
+use material_core::widgets::Button;
 use material_sdl2_renderer::SDL2Renderer;
 use material_terminal_renderer::TerminalRenderer;
 
 fn main() {
-    let content = "Hello, World!";
+    let content = Button::new("Hello, World!");
 
     let mut args = std::env::args();
     let _ = args.next();
