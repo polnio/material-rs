@@ -3,3 +3,6 @@ name = "material-core"
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
+
+[dependencies]
+bytemuck = { version = "1.23.1", features = ["derive"] }

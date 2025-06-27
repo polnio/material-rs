@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/*", "examples/*"]
+members = ["crates/*/*", "examples/*"]
 resolver = "3"
 
 [workspace.package]
@@ -8,4 +8,5 @@ authors = ["Po Co"]
 edition = "2024"
 
 [workspace.dependencies]
-material-core = { path = "crates/material-core" }
+material-core = { path = "crates/core/core" }
+material-terminal-renderer = { path = "crates/renderer/terminal" }

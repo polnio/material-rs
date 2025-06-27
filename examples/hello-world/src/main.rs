@@ -1,4 +1,6 @@
+use material_terminal_renderer::TerminalRenderer;
+
 fn main() {
-    let result = material_core::add(1, 2);
-    println!("Hello, world! {}", result);
+    let mut renderer = TerminalRenderer::new();
+    renderer.render("Hello, World!");
 }

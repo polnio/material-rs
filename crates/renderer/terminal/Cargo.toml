@@ -1,9 +1,9 @@
 [package]
-name = "hello-world"
+name = "material-terminal-renderer"
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
 
 [dependencies]
+crossterm = "0.29.0"
 material-core.workspace = true
-material-terminal-renderer.workspace = true
