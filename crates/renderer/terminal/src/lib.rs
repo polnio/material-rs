@@ -1,17 +1,19 @@
 use crossterm::terminal::{self, disable_raw_mode, enable_raw_mode};
 use crossterm::{cursor, event, execute};
 use material_core::geometry::{Color, Point, Rect};
+use material_core::renderer::{Renderer, RendererInner};
 use material_core::widgets::{IntoWidget, Widget};
-use material_core::Renderer;
 use std::io::{Stdout, Write};
 
 #[derive(Debug)]
 pub struct TerminalRenderer {
+    inner: RendererInner,
     stdout: Stdout,
 }
 impl TerminalRenderer {
     pub fn new() -> Self {
         Self {
+            inner: RendererInner::default(),
             stdout: std::io::stdout(),
         }
     }
@@ -25,6 +27,12 @@ impl TerminalRenderer {
 }
 
 impl Renderer for TerminalRenderer {
+    fn inner(&mut self) -> &mut RendererInner {
+        &mut self.inner
+    }
+    fn text_size(&self, text: &str) -> (u32, u32) {
+        (text.len() as u32, 1)
+    }
     fn draw_rect(&mut self, rect: Rect, color: Color) {
         todo!()
     }

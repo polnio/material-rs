@@ -1,12 +1,13 @@
 mod button;
 mod label;
 
+use crate::renderer::Renderer;
 pub use button::Button;
 pub use label::Label;
-
-use crate::Renderer;
+use taffy::NodeId;
 
 pub trait Widget {
+    fn layout<R: Renderer>(&mut self, renderer: &mut R) -> NodeId;
     fn render<R: Renderer>(&self, renderer: &mut R);
 }
 

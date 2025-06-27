@@ -1,7 +1,7 @@
 use font_kit::family_name::FamilyName;
 use material_core::geometry::{Color, Point, Rect};
+use material_core::renderer::{Renderer, RendererInner};
 use material_core::widgets::{IntoWidget, Widget};
-use material_core::Renderer;
 use ouroboros::self_referencing;
 use sdl2::event::Event;
 use sdl2::render::{Canvas, TextureQuery};
@@ -44,6 +44,7 @@ struct SDL2RendererTTF {
 }
 
 pub struct SDL2Renderer {
+    inner: RendererInner,
     canvas: Canvas<Window>,
     event_pump: sdl2::EventPump,
     ttf: SDL2RendererTTF,
@@ -82,7 +83,11 @@ impl SDL2Renderer {
                 .expect("Failed to load font")
         });
 
+        let mut inner = RendererInner::new();
+        inner.surface_size = (800, 600);
+
         SDL2Renderer {
+            inner,
             canvas,
             event_pump,
             ttf,
@@ -94,6 +99,12 @@ impl SDL2Renderer {
 }
 
 impl Renderer for SDL2Renderer {
+    fn inner(&mut self) -> &mut RendererInner {
+        &mut self.inner
+    }
+    fn text_size(&self, text: &str) -> (u32, u32) {
+        self.ttf.borrow_font().size_of(text).unwrap()
+    }
     fn draw_text(&mut self, text: &str, pos: Point, color: Color) {
         let texture_creator = self.canvas.texture_creator();
         let surface = self
@@ -118,11 +129,12 @@ impl Renderer for SDL2Renderer {
     }
 
     fn render(&mut self, widget: impl IntoWidget) {
-        let widget = widget.into_widget();
+        let mut widget = widget.into_widget();
 
         self.canvas.set_draw_color(Color::BLACK.to_sdl());
         self.canvas.clear();
         self.canvas.present();
+        self.compute_layout(&mut widget);
         'running: loop {
             self.canvas.clear();
             widget.render(self);
