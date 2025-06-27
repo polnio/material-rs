@@ -10,3 +10,4 @@ edition = "2024"
 [workspace.dependencies]
 material-core = { path = "crates/core/core" }
 material-terminal-renderer = { path = "crates/renderer/terminal" }
+material-sdl2-renderer = { path = "crates/renderer/sdl2" }

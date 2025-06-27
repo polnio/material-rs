@@ -30,9 +30,16 @@
     in
     {
       devShells = forAllSystems (
-        { craneLib, ... }:
+        { pkgs, craneLib, ... }:
         {
-          default = craneLib.devShell { };
+          default = craneLib.devShell {
+            packages = with pkgs; [
+              pkg-config
+              fontconfig
+              SDL2
+              SDL2_ttf
+            ];
+          };
         }
       );
     };
