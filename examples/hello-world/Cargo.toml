@@ -1,0 +1,8 @@
+[package]
+name = "hello-world"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+
+[dependencies]
+material-core.workspace = true
