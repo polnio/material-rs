@@ -75,3 +75,23 @@ impl From<u32> for Color {
         Self::from_u32(value)
     }
 }
+impl From<Color> for material_colors::color::Argb {
+    fn from(value: Color) -> Self {
+        material_colors::color::Argb {
+            alpha: value.a,
+            red: value.r,
+            green: value.g,
+            blue: value.b,
+        }
+    }
+}
+impl From<material_colors::color::Argb> for Color {
+    fn from(value: material_colors::color::Argb) -> Self {
+        Self {
+            r: value.red,
+            g: value.green,
+            b: value.blue,
+            a: value.alpha,
+        }
+    }
+}

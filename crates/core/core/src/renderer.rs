@@ -1,5 +1,6 @@
 use crate::geometry::{Color, Point, Rect};
 use crate::widgets::{IntoWidget, Widget};
+use crate::Theme;
 use taffy::TaffyTree;
 
 pub trait Renderer {
@@ -28,15 +29,21 @@ pub trait Renderer {
     }
 }
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug)]
 pub struct RendererInner {
     pub(crate) taffy: TaffyTree,
+    pub theme: Theme,
     pub surface_size: (u32, u32),
     pub cursor_pos: Point,
 }
 
 impl RendererInner {
-    pub fn new() -> Self {
-        Self::default()
+    pub fn new(theme: Theme) -> Self {
+        Self {
+            taffy: TaffyTree::new(),
+            theme,
+            surface_size: (0, 0),
+            cursor_pos: Point::default(),
+        }
     }
 }

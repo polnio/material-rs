@@ -3,8 +3,8 @@ use crate::renderer::Renderer;
 use crate::widgets::{IntoWidget, Widget};
 use taffy::prelude::*;
 
-const BUTTON_HEIGHT: f32 = 40.0;
-const BUTTON_HPADDING: f32 = 16.0;
+const BUTTON_HEIGHT: f32 = 56.0;
+const BUTTON_HPADDING: f32 = 24.0;
 
 pub struct Button<W: Widget> {
     child: W,
@@ -48,12 +48,15 @@ impl<W: Widget> Widget for Button<W> {
     fn render<R: Renderer>(&self, renderer: &mut R) {
         let node = renderer.inner().taffy.layout(self.layout_id).unwrap();
         let rect = Rect::from_layout(node);
-        let color = if rect.contains(renderer.inner().cursor_pos) {
-            Color::RED
-        } else {
-            Color::GREEN
-        };
-        renderer.draw_rect(rect, color, rect.height / 2);
+        {
+            let color = renderer.inner().theme.scheme().primary.into();
+            renderer.draw_rect(rect, color, rect.height / 2);
+        }
+        if rect.contains(renderer.inner().cursor_pos) {
+            let mut color: Color = renderer.inner().theme.scheme().on_primary.into();
+            color.a = 0x14;
+            renderer.draw_rect(rect, color, rect.height / 2);
+        }
         self.child.render(renderer);
     }
 }

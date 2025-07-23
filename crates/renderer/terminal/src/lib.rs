@@ -3,6 +3,7 @@ use crossterm::{cursor, event, execute};
 use material_core::geometry::{Color, Point, Rect};
 use material_core::renderer::{Renderer, RendererInner};
 use material_core::widgets::{IntoWidget, Widget};
+use material_core::Theme;
 use std::io::{Stdout, Write};
 
 #[derive(Debug)]
@@ -11,9 +12,9 @@ pub struct TerminalRenderer {
     stdout: Stdout,
 }
 impl TerminalRenderer {
-    pub fn new() -> Self {
+    pub fn new(theme: Theme) -> Self {
         Self {
-            inner: RendererInner::default(),
+            inner: RendererInner::new(theme),
             stdout: std::io::stdout(),
         }
     }

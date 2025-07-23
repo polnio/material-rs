@@ -2,6 +2,7 @@ use font_kit::family_name::FamilyName;
 use material_core::geometry::{Color, Point, Rect};
 use material_core::renderer::{Renderer, RendererInner};
 use material_core::widgets::{IntoWidget, Widget};
+use material_core::Theme;
 use ouroboros::self_referencing;
 use sdl2::event::Event;
 use sdl2::gfx::primitives::DrawRenderer;
@@ -51,7 +52,7 @@ pub struct SDL2Renderer {
     ttf: SDL2RendererTTF,
 }
 impl SDL2Renderer {
-    pub fn new() -> Self {
+    pub fn new(theme: Theme) -> Self {
         let sdl_context = sdl2::init().expect("Failed to initialize SDL");
         let ttf_context = sdl2::ttf::init().expect("Failed to initialize SDL TTF");
 
@@ -84,7 +85,7 @@ impl SDL2Renderer {
                 .expect("Failed to load font")
         });
 
-        let mut inner = RendererInner::new();
+        let mut inner = RendererInner::new(theme);
         inner.surface_size = (800, 600);
 
         SDL2Renderer {
@@ -144,8 +145,8 @@ impl Renderer for SDL2Renderer {
 
     fn render(&mut self, widget: impl IntoWidget) {
         let mut widget = widget.into_widget();
-
-        self.canvas.set_draw_color(Color::BLACK.to_sdl());
+        let background: Color = self.inner.theme.scheme().background.into();
+        self.canvas.set_draw_color(background.to_sdl());
         self.canvas.clear();
         self.canvas.present();
         self.compute_layout(&mut widget);
