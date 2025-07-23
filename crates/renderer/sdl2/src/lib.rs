@@ -4,6 +4,7 @@ use material_core::renderer::{Renderer, RendererInner};
 use material_core::widgets::{IntoWidget, Widget};
 use ouroboros::self_referencing;
 use sdl2::event::Event;
+use sdl2::gfx::primitives::DrawRenderer;
 use sdl2::render::{Canvas, TextureQuery};
 use sdl2::ttf::Font;
 use sdl2::video::Window;
@@ -79,7 +80,7 @@ impl SDL2Renderer {
 
         let ttf = SDL2RendererTTF::new(ttf_context, |ttf_context| {
             ttf_context
-                .load_font(font_path, 32)
+                .load_font(font_path, 16)
                 .expect("Failed to load font")
         });
 
@@ -121,10 +122,23 @@ impl Renderer for SDL2Renderer {
         self.canvas.copy(&texture, None, target).unwrap();
     }
 
-    fn draw_rect(&mut self, rect: Rect, color: Color) {
+    fn draw_rect(&mut self, rect: Rect, color: Color, radius: u32) {
         let c = self.canvas.draw_color();
         self.canvas.set_draw_color(color.to_sdl());
-        self.canvas.fill_rect(rect.to_sdl()).unwrap();
+        if radius > 0 {
+            self.canvas
+                .rounded_box(
+                    rect.x as i16,
+                    rect.y as i16,
+                    (rect.x + rect.width) as i16,
+                    (rect.y + rect.height) as i16,
+                    radius as i16,
+                    color.to_sdl(),
+                )
+                .unwrap();
+        } else {
+            self.canvas.fill_rect(rect.to_sdl()).unwrap();
+        }
         self.canvas.set_draw_color(c);
     }
 
@@ -141,6 +155,12 @@ impl Renderer for SDL2Renderer {
             for event in self.event_pump.poll_iter() {
                 match event {
                     Event::Quit { .. } => break 'running,
+                    Event::MouseMotion { x, y, .. } => {
+                        self.inner.cursor_pos = Point {
+                            x: x as u32,
+                            y: y as u32,
+                        };
+                    }
                     _ => {}
                 }
             }

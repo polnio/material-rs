@@ -6,7 +6,7 @@ pub trait Renderer {
     fn inner(&mut self) -> &mut RendererInner;
     fn text_size(&self, text: &str) -> (u32, u32);
     fn draw_text(&mut self, text: &str, pos: Point, color: Color);
-    fn draw_rect(&mut self, rect: Rect, color: Color);
+    fn draw_rect(&mut self, rect: Rect, color: Color, radius: u32);
     fn render(&mut self, widget: impl IntoWidget);
 
     fn compute_layout<W: Widget>(&mut self, widget: &mut W)
@@ -32,6 +32,7 @@ pub trait Renderer {
 pub struct RendererInner {
     pub(crate) taffy: TaffyTree,
     pub surface_size: (u32, u32),
+    pub cursor_pos: Point,
 }
 
 impl RendererInner {

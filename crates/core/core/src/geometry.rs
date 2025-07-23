@@ -43,6 +43,13 @@ impl Rect {
             height: layout.size.height as u32,
         }
     }
+
+    pub fn contains(&self, point: Point) -> bool {
+        self.x <= point.x
+            && self.y <= point.y
+            && self.x + self.width >= point.x
+            && self.y + self.height >= point.y
+    }
 }
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Pod, Zeroable)]
@@ -54,11 +61,13 @@ pub struct Color {
     pub a: u8,
 }
 impl Color {
-    pub const BLACK: Self = Self::from_u32(0xFF000000);
+    pub const BLACK: Self = Self::from_u32(0x000000FF);
     pub const WHITE: Self = Self::from_u32(0xFFFFFFFF);
-    pub const GREEN: Self = Self::from_u32(0xFF00FF00);
+    pub const RED: Self = Self::from_u32(0xFF0000FF);
+    pub const GREEN: Self = Self::from_u32(0x00FF00FF);
+    pub const BLUE: Self = Self::from_u32(0x0000FFFF);
     const fn from_u32(color: u32) -> Self {
-        bytemuck::must_cast(color)
+        bytemuck::must_cast(color.to_be())
     }
 }
 impl From<u32> for Color {

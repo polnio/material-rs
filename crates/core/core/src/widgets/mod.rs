@@ -26,6 +26,6 @@ impl<W: Widget> IntoWidget for W {
 impl<'a> IntoWidget for &'a str {
     type W = Label<'a>;
     fn into_widget(self) -> Self::W {
-        Label { text: self }
+        Label::new(self)
     }
 }

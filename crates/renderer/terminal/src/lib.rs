@@ -33,7 +33,7 @@ impl Renderer for TerminalRenderer {
     fn text_size(&self, text: &str) -> (u32, u32) {
         (text.len() as u32, 1)
     }
-    fn draw_rect(&mut self, rect: Rect, color: Color) {
+    fn draw_rect(&mut self, rect: Rect, color: Color, radius: u32) {
         let mut pos = rect.position();
         for _ in 0..rect.height {
             self.move_cursor(rect.position());
