@@ -20,10 +20,11 @@ pub use app::App;
 
 pub(crate) use app::Ui;
 
-use crate::geometry::Point;
+use crate::geometry::{Point, Size};
 
 pub trait DrawTarget {
     fn draw_pixel(&mut self, point: impl Into<Point>, color: Color);
+    fn size(&self) -> Size;
 }
 
 #[derive(Clone, Copy)]

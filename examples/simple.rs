@@ -8,6 +8,7 @@ fn main() {
     let mut app = material_ui::App::new();
     app.draw(&mut display, |ui| {
         ui.button("Hello, World!");
+        ui.button("Bye, World!");
     });
 
     display.flush().unwrap();
@@ -40,6 +41,9 @@ impl<'a> PpmScreen<'a> {
 }
 
 impl DrawTarget for PpmScreen<'_> {
+    fn size(&self) -> Size {
+        self.size
+    }
     #[allow(clippy::identity_op)]
     fn draw_pixel(&mut self, point: impl Into<Point>, color: Color) {
         if color.a == 0 {
