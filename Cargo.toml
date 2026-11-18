@@ -8,3 +8,4 @@ edition = "2024"
 
 [workspace.dependencies]
 material-ui.path = "crates/material-ui"
+material-ppm.path = "crates/material-ppm"

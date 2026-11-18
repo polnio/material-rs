@@ -5,3 +5,4 @@ edition.workspace = true
 
 [dependencies]
 material-ui.workspace = true
+material-ppm.workspace = true
