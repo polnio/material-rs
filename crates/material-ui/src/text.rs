@@ -2,7 +2,7 @@ use crate::geometry::{Point, Size};
 use crate::{Color, DrawTarget};
 use cosmic_text::{Attrs, Buffer, FontSystem, Shaping, SwashCache, fontdb::Source};
 
-const ROBOTO: &[u8] = include_bytes!("../resources/Roboto/static/Roboto-Medium.ttf");
+const ROBOTO: &[u8] = include_bytes!("../../../resources/Roboto/static/Roboto-Medium.ttf");
 
 pub struct TextCtx {
     pub(crate) font_system: FontSystem,

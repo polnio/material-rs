@@ -85,6 +85,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "example-simple"
+version = "0.1.0"
+dependencies = [
+ "material-ui",
+]
+
+[[package]]
 name = "font-types"
 version = "0.11.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"

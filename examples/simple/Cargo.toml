@@ -1,0 +1,7 @@
+[package]
+name = "example-simple"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+material-ui.workspace = true
