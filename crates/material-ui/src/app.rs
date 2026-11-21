@@ -1,4 +1,5 @@
-use crate::{ColorPalette, DrawTarget, geometry::Rectangle, text::TextCtx};
+use crate::geometry::{Point, Rectangle};
+use crate::{ColorPalette, DrawTarget, text::TextCtx};
 
 pub struct App {
     pub(crate) color_palette: ColorPalette,
@@ -24,7 +25,7 @@ impl App {
         let mut ui = Ui {
             app: self,
             draw_target: target,
-            current_rect: Rectangle::new((0, 0).into(), size),
+            current_rect: Rectangle::new(Point::new(0, 0), size),
         };
         f(&mut ui);
         target.flush();

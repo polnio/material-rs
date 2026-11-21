@@ -4,8 +4,13 @@ use crate::geometry::{Rectangle, Size};
 const BUTTON_HEIGHT: u32 = 56;
 const BUTTON_PADDING: u32 = 24;
 
+pub struct Button {
+    hovered: bool,
+    clicked: bool,
+}
+
 impl<'a, D: DrawTarget> crate::Ui<'a, D> {
-    pub fn button(&mut self, label: &str) {
+    pub fn button(&mut self, label: &str) -> Button {
         let mut text = crate::text::Text::new(
             &mut self.app.text_ctx,
             label,
@@ -16,7 +21,7 @@ impl<'a, D: DrawTarget> crate::Ui<'a, D> {
         let txt_size = text.measure();
         let btn_size = Size::new(txt_size.width() + 2 * BUTTON_PADDING, BUTTON_HEIGHT);
 
-        crate::primitive::rounded_rectangle(
+        let rr = crate::primitive::rounded_rectangle(
             self.draw_target,
             Rectangle::new(self.current_rect.origin(), btn_size),
             [
@@ -41,5 +46,20 @@ impl<'a, D: DrawTarget> crate::Ui<'a, D> {
 
         *self.current_rect.origin_mut().y_mut() += BUTTON_HEIGHT as i32;
         *self.current_rect.size().width_mut() -= BUTTON_HEIGHT;
+
+        let hovered = self.draw_target.cursor_pos().is_some_and(|p| rr.is_in(p));
+        let clicked = hovered && self.draw_target.cursor_state().left_click();
+        Button { hovered, clicked }
+    }
+}
+
+impl Button {
+    #[inline]
+    pub fn hovered(&self) -> bool {
+        self.hovered
+    }
+    #[inline]
+    pub fn clicked(&self) -> bool {
+        self.clicked
     }
 }

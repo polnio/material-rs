@@ -1,6 +1,6 @@
 use material_ui::geometry::{Point, Size};
 use material_ui::util::draw_blended_pixel;
-use material_ui::{Color, DrawTarget};
+use material_ui::{Color, CursorState, DrawTarget};
 use std::io::Write as _;
 
 pub struct PpmScreen<'a> {
@@ -33,6 +33,13 @@ impl DrawTarget for PpmScreen<'_> {
     fn size(&self) -> Size {
         self.size
     }
+    fn cursor_pos(&self) -> Option<Point> {
+        None
+    }
+    fn cursor_state(&self) -> CursorState {
+        CursorState::empty()
+    }
+
     fn clear(&mut self) {
         self.data.fill(0);
     }

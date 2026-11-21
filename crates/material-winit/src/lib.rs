@@ -2,6 +2,8 @@ use material_ui::DrawTarget;
 use material_ui::prelude::*;
 use ouroboros::self_referencing;
 use winit::application::ApplicationHandler;
+use winit::event::ElementState;
+use winit::event::MouseButton;
 use winit::event::WindowEvent;
 use winit::event_loop::{ActiveEventLoop, EventLoop};
 use winit::window::{Window, WindowId};
@@ -13,6 +15,8 @@ struct WinitScreen {
 
 struct WinitScreenCtx {
     window: WinitScreenWindow,
+    cursor_pos: Option<Point>,
+    cursor_state: CursorState,
 }
 
 #[self_referencing]
@@ -31,6 +35,14 @@ impl<'a> DrawTarget for WinitScreenDisplay<'a> {
     fn size(&self) -> Size {
         let size = self.ctx.window.borrow_winit().inner_size();
         Size::new(size.width, size.height)
+    }
+
+    fn cursor_pos(&self) -> Option<Point> {
+        self.ctx.cursor_pos
+    }
+
+    fn cursor_state(&self) -> CursorState {
+        self.ctx.cursor_state
     }
 
     fn clear(&mut self) {
@@ -78,7 +90,11 @@ impl ApplicationHandler for WinitScreen {
                 softbuffer::Context::new(window).expect("Failed to create softbuffer context");
             softbuffer::Surface::new(&ctx, window).expect("Failed to create surface")
         });
-        self.ctx = Some(WinitScreenCtx { window })
+        self.ctx = Some(WinitScreenCtx {
+            window,
+            cursor_pos: None,
+            cursor_state: CursorState::empty(),
+        })
     }
 
     fn window_event(
@@ -97,6 +113,21 @@ impl ApplicationHandler for WinitScreen {
             WindowEvent::CloseRequested => {
                 event_loop.exit();
             }
+            WindowEvent::CursorMoved { position, .. } => {
+                ctx.cursor_pos = Some(Point::new(position.x as i32, position.y as i32));
+                ctx.window.borrow_winit().request_redraw();
+            }
+            WindowEvent::MouseInput { state, button, .. } => match (button, state) {
+                (MouseButton::Left, ElementState::Pressed) => {
+                    ctx.cursor_state.set(CursorState::LEFT_CLICK, true);
+                    ctx.window.borrow_winit().request_redraw();
+                }
+                (MouseButton::Left, ElementState::Released) => {
+                    ctx.cursor_state.set(CursorState::LEFT_CLICK, false);
+                    ctx.window.borrow_winit().request_redraw();
+                }
+                _ => {}
+            },
             WindowEvent::RedrawRequested => {
                 let size = ctx.window.borrow_winit().inner_size();
                 ctx.window.with_surface_mut(|surface| {
