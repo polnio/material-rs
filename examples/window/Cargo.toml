@@ -1,0 +1,8 @@
+[package]
+name = "example-window"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+material-ui.workspace = true
+material-winit.workspace = true

@@ -18,18 +18,16 @@ impl App {
         }
     }
 
-    pub fn draw<'a, D: DrawTarget>(
-        &'a mut self,
-        target: &'a mut D,
-        f: impl FnOnce(&mut Ui<'a, D>),
-    ) {
+    pub fn draw<D: DrawTarget>(&mut self, target: &mut D, f: impl for<'a> FnOnce(&mut Ui<'a, D>)) {
         let size = target.size();
+        target.clear();
         let mut ui = Ui {
             app: self,
             draw_target: target,
             current_rect: Rectangle::new((0, 0).into(), size),
         };
         f(&mut ui);
+        target.flush();
     }
 }
 

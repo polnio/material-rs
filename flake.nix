@@ -19,6 +19,14 @@
               cargo
               clippy
             ];
+            LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath (
+              with pkgs;
+              [
+                # Winit
+                wayland
+                libxkbcommon
+              ]
+            );
           };
         }
       );

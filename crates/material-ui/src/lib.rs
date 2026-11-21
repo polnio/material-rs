@@ -4,6 +4,8 @@ extern crate alloc;
 
 pub mod component;
 pub mod geometry;
+pub mod util;
+
 mod text;
 
 pub mod prelude {
@@ -23,8 +25,10 @@ pub(crate) use app::Ui;
 use crate::geometry::{Point, Size};
 
 pub trait DrawTarget {
-    fn draw_pixel(&mut self, point: impl Into<Point>, color: Color);
     fn size(&self) -> Size;
+    fn clear(&mut self);
+    fn draw_pixel(&mut self, point: impl Into<Point>, color: Color);
+    fn flush(&mut self);
 }
 
 #[derive(Clone, Copy)]

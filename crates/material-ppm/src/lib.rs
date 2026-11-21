@@ -1,4 +1,5 @@
 use material_ui::geometry::{Point, Size};
+use material_ui::util::draw_blended_pixel;
 use material_ui::{Color, DrawTarget};
 use std::io::Write as _;
 
@@ -32,27 +33,14 @@ impl DrawTarget for PpmScreen<'_> {
     fn size(&self) -> Size {
         self.size
     }
+    fn clear(&mut self) {
+        self.data.fill(0);
+    }
+    fn flush(&mut self) {
+        let _ = self.flush();
+    }
     #[allow(clippy::identity_op)]
     fn draw_pixel(&mut self, point: impl Into<Point>, color: Color) {
-        if color.a == 0 {
-            return;
-        }
-        let point = point.into();
-        let x = point.x();
-        let y = point.y();
-        let w = self.size.width();
-        let h = self.size.height();
-        if x < 0 || x as u32 > w || y < 0 || y as u32 > h {
-            return;
-        }
-        let i = y as usize * w as usize + x as usize;
-
-        self.data[i * 3 + 0] = blend_color(color.r, self.data[i * 3 + 0], color.a);
-        self.data[i * 3 + 1] = blend_color(color.g, self.data[i * 3 + 1], color.a);
-        self.data[i * 3 + 2] = blend_color(color.b, self.data[i * 3 + 2], color.a);
+        draw_blended_pixel(self.data, self.size, point, color);
     }
-}
-
-fn blend_color(src: u8, dst: u8, a: u8) -> u8 {
-    ((a as u32 * src as u32 + (255 - a as u32) * dst as u32) / 255) as u8
 }
