@@ -1,6 +1,8 @@
 use crate::geometry::{Point, Rectangle};
 use crate::{ColorPalette, DrawTarget, text::TextCtx};
 
+/// The global application state
+/// Should be only initialized once to avoid unnecessary computing
 pub struct App {
     pub(crate) color_palette: ColorPalette,
     pub(crate) text_ctx: TextCtx,
