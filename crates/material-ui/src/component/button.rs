@@ -40,7 +40,7 @@ impl<'a, D: DrawTarget> crate::Ui<'a, D> {
                     + (BUTTON_HEIGHT as i32 - txt_size.height() as i32) / 2,
             )
                 .into(),
-            self.app.color_palette.white,
+            self.app.color_palette.primary_text,
             self.draw_target,
         );
 

@@ -45,10 +45,10 @@ impl<'a> DrawTarget for WinitScreenDisplay<'a> {
         self.ctx.cursor_state
     }
 
-    fn clear(&mut self) {
+    fn clear(&mut self, color: Color) {
         self.ctx.window.with_surface_mut(|surface| {
             let mut buffer = surface.buffer_mut().unwrap();
-            buffer.fill(0);
+            buffer.fill(color.to_argb());
         });
     }
 

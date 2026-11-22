@@ -40,8 +40,16 @@ impl DrawTarget for PpmScreen<'_> {
         CursorState::empty()
     }
 
-    fn clear(&mut self) {
-        self.data.fill(0);
+    fn clear(&mut self, color: Color) {
+        for i in 0..self.data.len() {
+            let b = match i % 3 {
+                0 => color.r,
+                1 => color.g,
+                2 => color.b,
+                _ => unreachable!(),
+            };
+            self.data[i] = b;
+        }
     }
     fn flush(&mut self) {
         let _ = self.flush();

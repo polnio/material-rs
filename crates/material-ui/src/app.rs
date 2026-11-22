@@ -14,14 +14,14 @@ pub struct Ui<'a, D: DrawTarget> {
 impl App {
     pub fn new() -> Self {
         Self {
-            color_palette: ColorPalette::default_const(),
+            color_palette: ColorPalette::catppuccin_mocha_blue(),
             text_ctx: TextCtx::new(),
         }
     }
 
     pub fn draw<D: DrawTarget>(&mut self, target: &mut D, f: impl for<'a> FnOnce(&mut Ui<'a, D>)) {
         let size = target.size();
-        target.clear();
+        target.clear(self.color_palette.background);
         let mut ui = Ui {
             app: self,
             draw_target: target,
