@@ -1,13 +1,14 @@
 use material_ui::App;
 
 fn main() {
+    let mut count = 0usize;
+
     material_winit::create_window(|display| {
-        let mut app = App::new();
-        app.draw(display, |ui| {
+        App::new().draw(display, |ui| {
             if ui.button("Hello, World!").clicked() {
-                println!("Hi!");
+                count += 1;
             }
-            ui.button("Bye, World!");
+            ui.label(&format!("Clicked {count} times"));
         });
     });
 }

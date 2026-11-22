@@ -8,8 +8,8 @@ use winit::event::WindowEvent;
 use winit::event_loop::{ActiveEventLoop, EventLoop};
 use winit::window::{Window, WindowId};
 
-struct WinitScreen {
-    on_draw_requested: Box<dyn Fn(&mut WinitScreenDisplay)>,
+struct WinitScreen<'a> {
+    on_draw_requested: Box<dyn FnMut(&mut WinitScreenDisplay) + 'a>,
     ctx: Option<WinitScreenCtx>,
 }
 
@@ -80,7 +80,7 @@ impl<'a> DrawTarget for WinitScreenDisplay<'a> {
     }
 }
 
-impl ApplicationHandler for WinitScreen {
+impl<'a> ApplicationHandler for WinitScreen<'a> {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
         let window = event_loop
             .create_window(Window::default_attributes())
@@ -146,7 +146,7 @@ impl ApplicationHandler for WinitScreen {
     }
 }
 
-pub fn create_window(f: impl Fn(&mut WinitScreenDisplay) + 'static) {
+pub fn create_window(f: impl FnMut(&mut WinitScreenDisplay)) {
     let event_loop = EventLoop::new().unwrap();
     let mut app = WinitScreen {
         on_draw_requested: Box::new(f),
