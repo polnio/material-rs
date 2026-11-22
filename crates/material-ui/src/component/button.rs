@@ -45,7 +45,10 @@ impl<'a, D: DrawTarget> crate::Ui<'a, D> {
         );
 
         *self.current_rect.origin_mut().y_mut() += BUTTON_HEIGHT as i32;
-        *self.current_rect.size().width_mut() -= BUTTON_HEIGHT;
+        {
+            let h = self.current_rect.size_mut().height_mut();
+            *h = h.saturating_sub(BUTTON_HEIGHT);
+        }
 
         let hovered = self.draw_target.cursor_pos().is_some_and(|p| rr.is_in(p));
         let clicked = hovered && self.draw_target.cursor_state().left_click();

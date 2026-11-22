@@ -2,9 +2,7 @@ use material_ui::DrawTarget;
 use material_ui::prelude::*;
 use ouroboros::self_referencing;
 use winit::application::ApplicationHandler;
-use winit::event::ElementState;
-use winit::event::MouseButton;
-use winit::event::WindowEvent;
+use winit::event::{ElementState, MouseButton, WindowEvent};
 use winit::event_loop::{ActiveEventLoop, EventLoop};
 use winit::window::{Window, WindowId};
 
@@ -64,12 +62,12 @@ impl<'a> DrawTarget for WinitScreenDisplay<'a> {
             if x < 0 || x as u32 > w || y < 0 || y as u32 > h {
                 return;
             }
-            let i = y as usize * w as usize + x as usize;
-
-            let buf = &mut *buffer;
-            let [_, r, g, b] = buf[i].to_be_bytes();
+            let Some(pixel) = buffer.get_mut(y as usize * w as usize + x as usize) else {
+                return;
+            };
+            let [_, r, g, b] = pixel.to_be_bytes();
             let [r, g, b] = material_ui::util::blend_color(color, [r, g, b]);
-            buf[i] = u32::from_be_bytes([0, r, g, b]);
+            *pixel = u32::from_be_bytes([0, r, g, b]);
         });
     }
 
