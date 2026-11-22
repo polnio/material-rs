@@ -47,13 +47,10 @@ impl RoundedRectangle {
         if x < rx || y < ry || x > rx + w as i32 || y > ry + h as i32 {
             return false;
         }
-        self.is_in_inner((x - rx) as u32, (y - ry) as u32, self.radii)
-    }
 
-    fn is_in_inner(&self, x: u32, y: u32, radii: [u32; 4]) -> bool {
-        let [tl, tr, bl, br] = radii;
-        let w = self.rect.size().width();
-        let h = self.rect.size().height();
+        let x = (x - rx) as u32;
+        let y = (y - ry) as u32;
+        let [tl, tr, bl, br] = self.radii;
         if x < tl && y < tl && sqd(tl - x, tl - y) > tl * tl {
             return false;
         }
@@ -63,10 +60,39 @@ impl RoundedRectangle {
         if x < bl && y + bl > h && sqd(bl - x, y + bl - h) > bl * bl {
             return false;
         }
-        if x + br > w && y + br > h && sqd(x + tr - w, y + bl - h) > br * br {
+        if x + br > w && y + br > h && sqd(x + br - w, y + br - h) > br * br {
             return false;
         }
         true
+    }
+
+    fn coverage(&self, x: u32, y: u32) -> f32 {
+        let [tl, tr, bl, br] = self.radii.map(|r| r as f32);
+        let w = self.rect.size().width() as f32;
+        let h = self.rect.size().height() as f32;
+
+        // pixel center
+        let px = x as f32 + 0.5;
+        let py = y as f32 + 0.5;
+
+        let corner = if px < tl && py < tl {
+            Some((tl - px, tl - py, tl))
+        } else if px + tr > w && py < tl {
+            Some((px + tr - w, tl - py, tr))
+        } else if px < bl && py + bl > h {
+            Some((bl - px, py + bl - h, bl))
+        } else if px + br > w && py + br > h {
+            Some((px + br - w, py + br - h, br))
+        } else {
+            None
+        };
+        match corner {
+            None => 1.0,
+            Some((dx, dy, r)) => {
+                let d = (dx * dx + dy * dy).sqrt() - r;
+                (0.5 - d).clamp(0.0, 1.1)
+            }
+        }
     }
 }
 
@@ -83,8 +109,11 @@ pub fn rounded_rectangle(
     let h = rect.size().height();
     for row in 0..h {
         for col in 0..w {
-            if rr.is_in_inner(col, row, radii) {
-                target.draw_pixel((x + col as i32, y + row as i32), color);
+            let a = rr.coverage(col, row);
+            if a > 0.0 {
+                let mut c = color;
+                c.a = (c.a as f32 * a).round() as u8;
+                target.draw_pixel((x + col as i32, y + row as i32), c);
             }
         }
     }
