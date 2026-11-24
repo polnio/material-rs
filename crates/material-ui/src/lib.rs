@@ -40,11 +40,15 @@ bitflags::bitflags! {
     #[derive(Clone, Copy)]
     pub struct CursorState: u8 {
         const LEFT_CLICK = 1 << 0;
+        const LEFT_DOWN = 1 << 1;
     }
 }
 
 impl CursorState {
     fn left_click(&self) -> bool {
         self.intersects(Self::LEFT_CLICK)
+    }
+    fn left_down(&self) -> bool {
+        self.intersects(Self::LEFT_DOWN)
     }
 }

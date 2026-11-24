@@ -1,8 +1,10 @@
-use crate::DrawTarget;
 use crate::geometry::{Rectangle, Size};
+use crate::{Color, DrawTarget};
 
 const BUTTON_HEIGHT: u32 = 56;
 const BUTTON_PADDING: u32 = 24;
+const BUTTON_HOVERED_LAYER: Color = Color::from_rgba(0xFFFFFF14); // White with opacity 0.08
+const BUTTON_PRESSED_LAYER: Color = Color::from_rgba(0xFFFFFF1A); // White with opacity 0.1
 
 pub struct Button {
     hovered: bool,
@@ -20,18 +22,40 @@ impl<'a, D: DrawTarget> crate::Ui<'a, D> {
 
         let txt_size = text.measure();
         let btn_size = Size::new(txt_size.width() + 2 * BUTTON_PADDING, BUTTON_HEIGHT);
+        let btn_rect = Rectangle::new(self.current_rect.origin(), btn_size);
+        let btn_radii = [
+            BUTTON_HEIGHT / 2,
+            BUTTON_HEIGHT / 2,
+            BUTTON_HEIGHT / 2,
+            BUTTON_HEIGHT / 2,
+        ];
 
         let rr = crate::primitive::rounded_rectangle(
             self.draw_target,
-            Rectangle::new(self.current_rect.origin(), btn_size),
-            [
-                BUTTON_HEIGHT / 2,
-                BUTTON_HEIGHT / 2,
-                BUTTON_HEIGHT / 2,
-                BUTTON_HEIGHT / 2,
-            ],
+            btn_rect,
+            btn_radii,
             self.app.color_palette.primary,
         );
+
+        let hovered = self.draw_target.cursor_pos().is_some_and(|p| rr.is_in(p));
+        let clicked = hovered && self.draw_target.cursor_state().left_click();
+        let pressed = hovered && self.draw_target.cursor_state().left_down();
+
+        if pressed {
+            crate::primitive::rounded_rectangle(
+                self.draw_target,
+                btn_rect,
+                btn_radii,
+                BUTTON_PRESSED_LAYER,
+            );
+        } else if hovered {
+            crate::primitive::rounded_rectangle(
+                self.draw_target,
+                btn_rect,
+                btn_radii,
+                BUTTON_HOVERED_LAYER,
+            );
+        }
 
         text.draw(
             (
@@ -50,8 +74,6 @@ impl<'a, D: DrawTarget> crate::Ui<'a, D> {
             *h = h.saturating_sub(BUTTON_HEIGHT);
         }
 
-        let hovered = self.draw_target.cursor_pos().is_some_and(|p| rr.is_in(p));
-        let clicked = hovered && self.draw_target.cursor_state().left_click();
         Button { hovered, clicked }
     }
 }

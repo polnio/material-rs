@@ -117,11 +117,12 @@ impl<'a> ApplicationHandler for WinitScreen<'a> {
             }
             WindowEvent::MouseInput { state, button, .. } => match (button, state) {
                 (MouseButton::Left, ElementState::Pressed) => {
-                    ctx.cursor_state.set(CursorState::LEFT_CLICK, true);
+                    ctx.cursor_state.set(CursorState::LEFT_DOWN, true);
                     ctx.window.borrow_winit().request_redraw();
                 }
                 (MouseButton::Left, ElementState::Released) => {
-                    ctx.cursor_state.set(CursorState::LEFT_CLICK, false);
+                    ctx.cursor_state.set(CursorState::LEFT_DOWN, false);
+                    ctx.cursor_state.set(CursorState::LEFT_CLICK, true);
                     ctx.window.borrow_winit().request_redraw();
                 }
                 _ => {}
@@ -138,6 +139,7 @@ impl<'a> ApplicationHandler for WinitScreen<'a> {
                 });
                 let mut handler = WinitScreenDisplay { ctx };
                 (self.on_draw_requested)(&mut handler);
+                ctx.cursor_state.set(CursorState::LEFT_CLICK, false);
             }
             _ => {}
         }
